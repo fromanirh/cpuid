@@ -31,6 +31,11 @@ func detectFeatures() {
 	leaf0x80000005()
 	leaf0x80000006()
 
+	if HasFeature(HYPERVISOR) {
+		leaf0x40000000()
+		leaf0x40000001()
+	}
+
 	if HasFeature(OSXSAVE) {
 		eax, _ := xgetbv_low(0)
 		if (eax & 0x6) == 0x6 {
@@ -208,6 +213,17 @@ func leaf6() {
 func leaf7() {
 	_, ebx, ecx, _ := cpuid_low(7, 0)
 	extendedFeatureFlags = (uint64(ecx) << 32) | uint64(ebx)
+}
+
+func leaf0x40000000() {
+	eax, ebx, ecx, edx := cpuid_low(0x40000000, 0)
+	HypervCPUIDMax = uint32(eax)
+	HypervVendorIDSignatureString = string(int32sToBytes(ebx, ecx, edx))
+}
+
+func leaf0x40000001() {
+	eax, _, _, _ := cpuid_low(0x40000001, 0)
+	HypervInterfaceSignatureString = string(int32sToBytes(eax))
 }
 
 func leaf0x80000000() {
