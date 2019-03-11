@@ -34,6 +34,9 @@ func detectFeatures() {
 	if HasFeature(HYPERVISOR) {
 		leaf0x40000000()
 		leaf0x40000001()
+		// we don't care about leaf 0x40000002 for now
+		leaf0x40000003()
+		leaf0x40000004()
 	}
 
 	if HasFeature(OSXSAVE) {
@@ -224,6 +227,17 @@ func leaf0x40000000() {
 func leaf0x40000001() {
 	eax, _, _, _ := cpuid_low(0x40000001, 0)
 	HypervInterfaceSignatureString = string(int32sToBytes(eax))
+}
+
+func leaf0x40000003() {
+	_, _, _, edx := cpuid_low(0x40000003, 0)
+	hypervFeatureFlags = uint64(edx)
+}
+
+func leaf0x40000004() {
+	eax, ebx, _, _ := cpuid_low(0x40000004, 0)
+	hypervRecommendationFlags = uint64(eax)
+	hypervSpinlockRetries = uint64(ebx)
 }
 
 func leaf0x80000000() {
