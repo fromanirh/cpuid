@@ -37,6 +37,9 @@ func detectFeatures() {
 		// we don't care about leaf 0x40000002 for now
 		leaf0x40000003()
 		leaf0x40000004()
+		// intentional jump to the nested HyperV leaves, we don't care about others atm
+		leaf0x40000009()
+		leaf0x4000000A()
 	}
 
 	if HasFeature(OSXSAVE) {
@@ -238,6 +241,18 @@ func leaf0x40000004() {
 	eax, ebx, _, _ := cpuid_low(0x40000004, 0)
 	hypervRecommendationFlags = uint64(eax)
 	hypervSpinlockRetries = uint64(ebx)
+}
+
+func leaf0x40000009() {
+	eax, _, _, edx := cpuid_low(0x40000009, 0)
+	hypervNestedFeatureMSRFlags = uint64(eax)
+	hypervNestedFeatureHypercallFlags = uint64(edx)
+}
+
+func leaf0x4000000A() {
+	eax, _, _, _ := cpuid_low(0x4000000A, 0)
+	// intentionally ignored EVMCS version - we don't care about it yet
+	hypervNestedFeatureOptimizationFlags = uint64(eax)
 }
 
 func leaf0x80000000() {
