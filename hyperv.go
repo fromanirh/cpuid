@@ -73,6 +73,78 @@ const (
 	HYPERV_USE_DIRECT_SYNTHETIC_TIMERS
 )
 
+type HypervPartitionPrivilege uint64
+
+func (r HypervPartitionPrivilege) toFlag() uint64 {
+	return uint64(r)
+}
+
+var hypervPartitionPrivilegeFlags uint64
+
+func HypervHasPrivilege (privilege HypervPartitionPrivilege) bool {
+	return (hypervFeatureFlags & privilege.toFlag()) != 0
+}
+
+const (
+	// Access to virtual MSRs
+	HYPERV_AccessVpRunTimeRegs = HypervPartitionPrivilege(1) << iota
+	HYPERV_AccessPartitionReferenceCounter
+	HYPERV_AccessSynicRegs
+	HYPERV_AccessSyntheticTimerRegs
+	HYPERV_AccessIntrCtrlRegs
+	HYPERV_AccessHypercallMsrs
+	HYPERV_AccessVpIndex
+	HYPERV_AccessResetReg
+	HYPERV_AccessStatsReg                 // 8
+	HYPERV_AccessPartitionReferenceTsc
+	HYPERV_AccessGuestIdleReg
+	HYPERV_AccessFrequencyRegs
+	HYPERV_AccessDebugRegs
+	HYPERV_AccessReenlightenmentControls
+	_
+	_
+	_                                     // 16
+	_
+	_
+	_
+	_
+	_
+	_
+	_
+	_                                     // 24
+	_
+	_
+	_
+	_
+	_
+	_
+	_
+
+	// Access to hypercalls
+	HYPERV_CreatePartitions               // 32
+	HYPERV_AccessPartitionId
+	HYPERV_AccessMemoryPool
+	_
+	HYPERV_PostMessages
+	HYPERV_SignalEvents
+	HYPERV_CreatePort
+	HYPERV_ConnectPort
+	HYPERV_AccessStats                    // 40
+	_
+	_
+	HYPERV_Debugging
+	HYPERV_CpuManagement
+	_
+	_
+	_
+	HYPERV_AccessVSM                      // 48
+	HYPERV_AccessVpRegisters
+	_
+	_
+	HYPERV_EnableExtendedHypercalls
+	HYPERV_StartVirtualProcessor
+)
+
 type HypervRecommendation uint64
 
 func (r HypervRecommendation) toFlag() uint64 {
