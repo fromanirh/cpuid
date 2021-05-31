@@ -82,7 +82,7 @@ func (r HypervPartitionPrivilege) toFlag() uint64 {
 var hypervPartitionPrivilegeFlags uint64
 
 func HypervHasPrivilege (privilege HypervPartitionPrivilege) bool {
-	return (hypervFeatureFlags & privilege.toFlag()) != 0
+	return (hypervPartitionPrivilegeFlags & privilege.toFlag()) != 0
 }
 
 const (
